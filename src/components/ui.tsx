@@ -52,6 +52,8 @@ type ButtonProps = {
   href?: string;
   variant?: "primary" | "secondary" | "ghost";
   className?: string;
+  target?: string;
+  rel?: string;
 };
 
 export function Button({
@@ -59,6 +61,8 @@ export function Button({
   href = "#",
   variant = "primary",
   className = "",
+  target,
+  rel,
 }: ButtonProps) {
   const base =
     "roll-btn inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium transition-all duration-200 active:scale-[0.98]";
@@ -69,8 +73,16 @@ export function Button({
     ghost: "text-muted hover:text-white",
   }[variant];
 
+  const relValue =
+    target === "_blank" ? rel ?? "noopener noreferrer" : rel;
+
   return (
-    <Link href={href} className={`${base} ${styles} ${className}`}>
+    <Link
+      href={href}
+      target={target}
+      rel={relValue}
+      className={`${base} ${styles} ${className}`}
+    >
       {typeof children === "string" ? (
         <RollingText text={children} />
       ) : (

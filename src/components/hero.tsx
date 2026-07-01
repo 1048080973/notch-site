@@ -71,7 +71,12 @@ export function Hero() {
         </p>
 
         <div className="reveal mt-7 flex flex-wrap items-center justify-center gap-3">
-          <Button href="#contact">Preview Lottie</Button>
+          <Button
+            href="https://1048080973.github.io/Lottie-inspector-se/"
+            target="_blank"
+          >
+            Preview Lottie
+          </Button>
           <GlowButton downloadAll>Download for free</GlowButton>
         </div>
       </div>
