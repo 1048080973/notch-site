@@ -1,26 +1,545 @@
 @import "tailwindcss";
 
+@theme {
+  --color-bg: #050505;
+  --color-bg-soft: #0a0a0a;
+  --color-card: #0e0e10;
+  --color-card-soft: #131316;
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-border-strong: rgba(255, 255, 255, 0.14);
+  --color-muted: #8a8a92;
+  --color-accent: #2f6bff;
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  --radius-card: 24px;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: dark;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-bg);
+  color: #f5f5f7;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: rgba(47, 107, 255, 0.35);
+}
+
+/* Thin custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #050505;
+}
+::-webkit-scrollbar-thumb {
+  background: #1d1d20;
+  border-radius: 999px;
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 28s linear infinite;
+}
+
+/* ---- "Notch" hover navbar: links drop down from the top edge ---- */
+.notch-wrap {
+  --notch-bg: #09090b;
+  --notch-r: 16px;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+/* Rolling text — each letter has two stacked copies; on hover it rolls up one
+   line so the duplicate replaces it, staggered across letters to form a wave. */
+.roll-text {
+  display: inline-flex;
+  line-height: 1.2;
+}
+.roll-letter {
+  display: inline-block;
+  height: 1.2em;
+  overflow: hidden;
+  vertical-align: top;
+}
+.roll-stack {
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.5s var(--ease);
+  will-change: transform;
+}
+.roll-stack > span {
+  display: block;
+  height: 1.2em;
+}
+.roll-btn:hover .roll-stack,
+.roll-btn:focus-visible .roll-stack {
+  transform: translateY(-50%);
+  transition-delay: calc(var(--i) * 0.03s);
+}
+
+/* Connector dashes (How it works · card 2) — a horizontal dash pattern that
+   grows left→right on a seamless loop via clip-path (no dash distortion). */
+.grow-dash {
+  background-image: repeating-linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0.3) 0 4px,
+    transparent 4px 7px
+  );
+  animation: dash-grow 2.6s var(--ease) infinite;
+}
+@keyframes dash-grow {
+  0% {
+    clip-path: inset(0 100% 0 0);
+  }
+  45% {
+    clip-path: inset(0 0 0 0);
+  }
+  60% {
+    clip-path: inset(0 0 0 0);
+  }
+  100% {
+    clip-path: inset(0 0 0 100%);
+  }
+}
+
+/* Case-study caption — slide up + fade in on each slide change (after a short
+   delay so the image transition reads first). */
+.caption-in {
+  animation: caption-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: 0.4s;
+}
+@keyframes caption-in {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Stepped 90° rotation loop (How it works · Group icon) — snap, hold, repeat. */
+.step-rotate {
+  animation: step-rotate 4s infinite;
+}
+@keyframes step-rotate {
+  0%,
+  18% {
+    transform: rotate(0deg);
+  }
+  25%,
+  43% {
+    transform: rotate(90deg);
+  }
+  50%,
+  68% {
+    transform: rotate(180deg);
+  }
+  75%,
+  93% {
+    transform: rotate(270deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Target block lights up exactly when its dash finishes reaching it. */
+.block-pulse {
+  animation: block-pulse 2.6s var(--ease) infinite;
+}
+@keyframes block-pulse {
+  0%,
+  40% {
+    background-color: #2d2d2f;
+  }
+  45%,
+  58% {
+    background-color: #636363;
+  }
+  70%,
+  100% {
+    background-color: #2d2d2f;
+  }
+}
+
+/* Notch icon — two stacked images; on hover the stack slides up to swap. */
+.icon-clip {
+  height: 22px;
+  width: 22px;
+  overflow: hidden;
+}
+.icon-stack {
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.45s var(--ease);
+  will-change: transform;
+}
+.icon-stack > * {
+  height: 22px;
+  width: 22px;
+  flex: none;
+}
+.icon-swap:hover .icon-stack,
+.icon-swap:focus-visible .icon-stack {
+  transform: translateY(-50%);
+}
+
+/* Figma notch shape — a single path that morphs (widens) on hover.
+   short + long Union paths share the same command structure, so the
+   browser can interpolate the `d` property directly. */
+.notch-svg {
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.notch-path {
+  d: path(
+    "M0 25.7178H578.458C598.727 25.7178 618.24 33.4114 633.055 47.2441L645.853 59.1934C660.667 73.0254 680.181 80.7188 700.449 80.7188H739.551C759.819 80.7188 779.333 73.0254 794.147 59.1934L806.945 47.2441C821.76 33.4114 841.273 25.7178 861.542 25.7178H1440L1441 0H1L0 25.7178Z"
+  );
+  transition: d 0.55s var(--ease);
+}
+.notch-wrap:hover .notch-path,
+.notch-wrap:focus-within .notch-path {
+  d: path(
+    "M0 25.7178H468.458C488.727 25.7178 508.24 33.4114 523.055 47.2442L535.853 59.1934C550.667 73.0255 570.181 80.7188 590.449 80.7188H849.551C869.819 80.7188 889.333 73.0255 904.147 59.1934L916.945 47.2442C931.76 33.4115 951.273 25.7178 971.542 25.7178H1440L1441 0H1L0 25.7178Z"
+  );
+}
+
+/* concave fillets blending the tab into the top edge */
+.notch-bg::before,
+.notch-bg::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: var(--notch-r);
+  height: var(--notch-r);
+  background: var(--notch-bg);
+  pointer-events: none;
+}
+.notch-bg::before {
+  left: calc(-1 * var(--notch-r));
+  -webkit-mask: radial-gradient(
+    circle at top left,
+    transparent var(--notch-r),
+    #000 calc(var(--notch-r) + 0.5px)
+  );
+  mask: radial-gradient(
+    circle at top left,
+    transparent var(--notch-r),
+    #000 calc(var(--notch-r) + 0.5px)
+  );
+}
+.notch-bg::after {
+  right: calc(-1 * var(--notch-r));
+  -webkit-mask: radial-gradient(
+    circle at top right,
+    transparent var(--notch-r),
+    #000 calc(var(--notch-r) + 0.5px)
+  );
+  mask: radial-gradient(
+    circle at top right,
+    transparent var(--notch-r),
+    #000 calc(var(--notch-r) + 0.5px)
+  );
+}
+
+/* the actual content row (logo always centered, links flank it) */
+.notch-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 68px;
+  padding: 0 10px;
+}
+
+/* each link is clipped so its label can slide down from above */
+.notch-link {
+  display: flex;
+  align-items: center;
+  height: 26px;
+  overflow: hidden;
+}
+.notch-link > span {
+  display: block;
+  white-space: nowrap;
+  transform: translateY(-150%);
+  opacity: 0;
+  transition:
+    transform 0.5s var(--ease),
+    opacity 0.35s ease;
+}
+.notch-wrap:hover .notch-link > span,
+.notch-wrap:focus-within .notch-link > span {
+  transform: translateY(0);
+  opacity: 1;
+}
+/* gentle left-to-right stagger */
+.notch-link:nth-child(1) > span {
+  transition-delay: 0.02s;
+}
+.notch-link:nth-child(2) > span {
+  transition-delay: 0.06s;
+}
+
+@keyframes float-up {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.reveal {
+  animation: float-up 0.7s ease both;
+}
+
+/* ============================================================
+   Cursor-following mesh-gradient border glow (interactive).
+   Driven by JS-set --cursor-angle and --edge-proximity.
+   ============================================================ */
+.border-glow-card {
+  --edge-proximity: 0;
+  --cursor-angle: 45deg;
+  --edge-sensitivity: 30;
+  --color-sensitivity: calc(var(--edge-sensitivity) + 20);
+  --border-radius: 28px;
+  --glow-padding: 40px;
+  --cone-spread: 25;
+
+  position: relative;
+  border-radius: var(--border-radius);
+  isolation: isolate;
+  transform: translate3d(0, 0, 0.01px);
+  display: grid;
+  border: 1px solid rgb(255 255 255 / 15%);
+  background: var(--card-bg, #120f17);
+  overflow: visible;
+  box-shadow:
+    rgba(0, 0, 0, 0.1) 0px 1px 2px,
+    rgba(0, 0, 0, 0.1) 0px 2px 4px,
+    rgba(0, 0, 0, 0.1) 0px 4px 8px,
+    rgba(0, 0, 0, 0.1) 0px 8px 16px,
+    rgba(0, 0, 0, 0.1) 0px 16px 32px,
+    rgba(0, 0, 0, 0.1) 0px 32px 64px;
+}
+
+.border-glow-card::before,
+.border-glow-card::after,
+.border-glow-card > .edge-light {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  transition: opacity 0.25s ease-out;
+  z-index: -1;
+}
+
+.border-glow-card:not(:hover):not(.sweep-active)::before,
+.border-glow-card:not(:hover):not(.sweep-active)::after,
+.border-glow-card:not(:hover):not(.sweep-active) > .edge-light {
+  opacity: 0;
+  transition: opacity 0.75s ease-in-out;
+}
+
+/* colored mesh-gradient border */
+.border-glow-card::before {
+  border: 1px solid transparent;
+  background:
+    linear-gradient(var(--card-bg, #120f17) 0 100%) padding-box,
+    linear-gradient(rgb(255 255 255 / 0%) 0% 100%) border-box,
+    var(--gradient-one, radial-gradient(at 80% 55%, hsla(268, 100%, 76%, 1) 0px, transparent 50%)) border-box,
+    var(--gradient-two, radial-gradient(at 69% 34%, hsla(349, 100%, 74%, 1) 0px, transparent 50%)) border-box,
+    var(--gradient-three, radial-gradient(at 8% 6%, hsla(136, 100%, 78%, 1) 0px, transparent 50%)) border-box,
+    var(--gradient-four, radial-gradient(at 41% 38%, hsla(192, 100%, 64%, 1) 0px, transparent 50%)) border-box,
+    var(--gradient-five, radial-gradient(at 86% 85%, hsla(186, 100%, 74%, 1) 0px, transparent 50%)) border-box,
+    var(--gradient-six, radial-gradient(at 82% 18%, hsla(52, 100%, 65%, 1) 0px, transparent 50%)) border-box,
+    var(--gradient-seven, radial-gradient(at 51% 4%, hsla(12, 100%, 72%, 1) 0px, transparent 50%)) border-box,
+    var(--gradient-base, linear-gradient(#c299ff 0 100%)) border-box;
+
+  opacity: calc((var(--edge-proximity) - var(--color-sensitivity)) / (100 - var(--color-sensitivity)));
+
+  -webkit-mask-image: conic-gradient(
+    from var(--cursor-angle) at center,
+    black calc(var(--cone-spread) * 1%),
+    transparent calc((var(--cone-spread) + 15) * 1%),
+    transparent calc((100 - var(--cone-spread) - 15) * 1%),
+    black calc((100 - var(--cone-spread)) * 1%)
+  );
+  mask-image: conic-gradient(
+    from var(--cursor-angle) at center,
+    black calc(var(--cone-spread) * 1%),
+    transparent calc((var(--cone-spread) + 15) * 1%),
+    transparent calc((100 - var(--cone-spread) - 15) * 1%),
+    black calc((100 - var(--cone-spread)) * 1%)
+  );
+}
+
+/* colored mesh-gradient background fill near edges */
+.border-glow-card::after {
+  border: 1px solid transparent;
+  background:
+    var(--gradient-one, radial-gradient(at 80% 55%, hsla(268, 100%, 76%, 1) 0px, transparent 50%)) padding-box,
+    var(--gradient-two, radial-gradient(at 69% 34%, hsla(349, 100%, 74%, 1) 0px, transparent 50%)) padding-box,
+    var(--gradient-three, radial-gradient(at 8% 6%, hsla(136, 100%, 78%, 1) 0px, transparent 50%)) padding-box,
+    var(--gradient-four, radial-gradient(at 41% 38%, hsla(192, 100%, 64%, 1) 0px, transparent 50%)) padding-box,
+    var(--gradient-five, radial-gradient(at 86% 85%, hsla(186, 100%, 74%, 1) 0px, transparent 50%)) padding-box,
+    var(--gradient-six, radial-gradient(at 82% 18%, hsla(52, 100%, 65%, 1) 0px, transparent 50%)) padding-box,
+    var(--gradient-seven, radial-gradient(at 51% 4%, hsla(12, 100%, 72%, 1) 0px, transparent 50%)) padding-box,
+    var(--gradient-base, linear-gradient(#c299ff 0 100%)) padding-box;
+
+  mask-image:
+    linear-gradient(to bottom, black, black),
+    radial-gradient(ellipse at 50% 50%, black 40%, transparent 65%),
+    radial-gradient(ellipse at 66% 66%, black 5%, transparent 40%),
+    radial-gradient(ellipse at 33% 33%, black 5%, transparent 40%),
+    radial-gradient(ellipse at 66% 33%, black 5%, transparent 40%),
+    radial-gradient(ellipse at 33% 66%, black 5%, transparent 40%),
+    conic-gradient(from var(--cursor-angle) at center, transparent 5%, black 15%, black 85%, transparent 95%);
+
+  mask-composite: subtract, add, add, add, add, add;
+  opacity: calc(var(--fill-opacity, 0.5) * (var(--edge-proximity) - var(--color-sensitivity)) / (100 - var(--color-sensitivity)));
+  mix-blend-mode: soft-light;
+}
+
+/* outer glow layer */
+.border-glow-card > .edge-light {
+  inset: calc(var(--glow-padding) * -1);
+  pointer-events: none;
+  z-index: 1;
+
+  -webkit-mask-image: conic-gradient(
+    from var(--cursor-angle) at center, black 2.5%, transparent 10%, transparent 90%, black 97.5%
+  );
+  mask-image: conic-gradient(
+    from var(--cursor-angle) at center, black 2.5%, transparent 10%, transparent 90%, black 97.5%
+  );
+
+  opacity: calc((var(--edge-proximity) - var(--edge-sensitivity)) / (100 - var(--edge-sensitivity)));
+  mix-blend-mode: plus-lighter;
+}
+
+.border-glow-card > .edge-light::before {
+  content: "";
+  position: absolute;
+  inset: var(--glow-padding);
+  border-radius: inherit;
+  box-shadow:
+    inset 0 0 0 1px var(--glow-color, hsl(40deg 80% 80% / 100%)),
+    inset 0 0 1px 0 var(--glow-color-60, hsl(40deg 80% 80% / 60%)),
+    inset 0 0 3px 0 var(--glow-color-50, hsl(40deg 80% 80% / 50%)),
+    inset 0 0 6px 0 var(--glow-color-40, hsl(40deg 80% 80% / 40%)),
+    inset 0 0 15px 0 var(--glow-color-30, hsl(40deg 80% 80% / 30%)),
+    inset 0 0 25px 2px var(--glow-color-20, hsl(40deg 80% 80% / 20%)),
+    inset 0 0 50px 2px var(--glow-color-10, hsl(40deg 80% 80% / 10%)),
+    0 0 1px 0 var(--glow-color-60, hsl(40deg 80% 80% / 60%)),
+    0 0 3px 0 var(--glow-color-50, hsl(40deg 80% 80% / 50%)),
+    0 0 6px 0 var(--glow-color-40, hsl(40deg 80% 80% / 40%)),
+    0 0 15px 0 var(--glow-color-30, hsl(40deg 80% 80% / 30%)),
+    0 0 25px 2px var(--glow-color-20, hsl(40deg 80% 80% / 20%)),
+    0 0 50px 2px var(--glow-color-10, hsl(40deg 80% 80% / 10%));
+}
+
+.border-glow-inner {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 1;
+}
+
+/* ============================================================
+   Animated dot field (canvas grid of softly pulsing dots).
+   ============================================================ */
+.dot-field-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.dot-field-container > canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* ============================================================
+   Gradual / progressive blur (stacked backdrop-filter layers).
+   ============================================================ */
+.gradual-blur-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.gradual-blur-inner > div {
+  -webkit-backdrop-filter: inherit;
+  backdrop-filter: inherit;
+}
+
+.gradual-blur {
+  isolation: isolate;
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .gradual-blur-inner > div {
+    background: rgba(0, 0, 0, 0.3);
+    opacity: 0.5;
+  }
+}
+
+.gradual-blur-fixed {
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+/* Pill button variant of the glow card. */
+.glow-pill {
+  --border-radius: 9999px;
+  --card-bg: #0c0c0f;
+  display: inline-grid;
+  box-shadow: none;
+}
+.glow-pill .border-glow-inner {
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  border-radius: inherit;
+  white-space: nowrap;
 }
