@@ -41,7 +41,7 @@ export function Hero() {
       <div className="pointer-events-none absolute left-1/2 top-[calc(56%-50px)] z-0 aspect-square w-[56vw] max-w-[840px] -translate-x-1/2">
         <Image
           src="/hero-cube.png"
-          alt="Notch layered AI engine"
+          alt="MotionAutoBuilder Lottie motion automation engine"
           fill
           priority
           sizes="56vw"
@@ -56,7 +56,7 @@ export function Hero() {
           <span className="rounded-full bg-[#7c28dd] px-2.5 py-0.5 text-xs font-semibold text-white">
             New
           </span>
-          <span className="text-white/80">Custom AI Agents</span>
+          <span className="text-white/80">AI Matching · Auto Make Lottie</span>
         </span>
 
         <h1 className="reveal mt-6 max-w-4xl text-balance text-4xl font-semibold leading-[1.03] tracking-tight md:text-6xl">
@@ -67,7 +67,8 @@ export function Hero() {
         </h1>
 
         <p className="reveal mt-5 max-w-xl text-pretty text-sm leading-relaxed text-white/55 md:text-base">
-          Motion Automation for Modern Design Teams.
+          Auto make Lottie animations with AI matching — match design layers to
+          motion templates, replace assets, and export faster.
         </p>
 
         <div className="reveal mt-7 flex flex-wrap items-center justify-center gap-3">
